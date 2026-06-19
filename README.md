@@ -13,6 +13,9 @@ A demonstration of the system execution is available in the demo_run_logs file.
 
 ### Execution
 To launch the system, run the launcher.py script from the root directory.
+```bash
+python3 launcher.py
+```
 This script serves as the primary entry point: it automatically installs any missing dependencies and then starts the system.
 
 ## Language Requirements:
