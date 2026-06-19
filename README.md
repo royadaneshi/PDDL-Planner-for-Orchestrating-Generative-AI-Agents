@@ -1,4 +1,4 @@
-# Multi-Agent Booking System using PDDL planner
+# The Curious Case of Planning for Unreliable Agents: Challenges and Opportunities in Orchestrating Generative AI Agents
 
 This project is a multi-agent orchestration framework designed to handle booking tasks (Hotels, Flights, Taxis) using **PDDL** planner. It utilizes the **Fast Downward** planner with FF heuristic to generate sequences of actions while managing budget constraints and plan violations.
 A demonstration of the system execution is available in the demo_run_logs file.
