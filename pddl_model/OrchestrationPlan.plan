@@ -1,0 +1,3 @@
+(book-flight am415 t10-30 c195 denver chicago t07-55)
+(book-taxi uberx t13-30 c30 am415 t10-30)
+(book-hotel hyattregency t16-00 c220 uberx t13-30)

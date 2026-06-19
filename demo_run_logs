@@ -1,0 +1,883 @@
+#cloudexe --gpuspec H100x1 -- /usr/bin/python3 ./luncher.py ls
+Getting GPU(s) 299 sec
+
+
+.
+--- Starting Ollama Server ---
+(book-flight am415 t10-30 c195 denver chicago t07-55)
+    (book-taxi uberx t13-30 c30 am415 t10-30)
+    (book-hotel hyattregency t16-00 c220 uberx t13-30)
+--- Starting Travel Organizer Agent ---
+
+Found 13 causal link(s):
+
+  (__init__) --[flight-route am415 denver chicago]--> (book-flight am415 t10-30 c195 denver chicago t07-55)
+  (__init__) --[is-origin denver]--> (book-flight am415 t10-30 c195 denver chicago t07-55)
+  (__init__) --[has-cost am415 c195]--> (book-flight am415 t10-30 c195 denver chicago t07-55)
+  (__init__) --[is-destination chicago]--> (book-flight am415 t10-30 c195 denver chicago t07-55)
+  (__init__) --[flight-times am415 t07-55 t10-30]--> (book-flight am415 t10-30 c195 denver chicago t07-55)
+  (book-flight am415 t10-30 c195 denver chicago t07-55) --[flight-booked-for am415 t10-30]--> (book-taxi uberx t13-30 c30 am415 t10-30)
+  (__init__) --[next-available t10-30 t13-30]--> (book-taxi uberx t13-30 c30 am415 t10-30)
+  (__init__) --[has-cost uberx c30]--> (book-taxi uberx t13-30 c30 am415 t10-30)
+  (__init__) --[taxi-available uberx t13-30]--> (book-taxi uberx t13-30 c30 am415 t10-30)
+  (book-taxi uberx t13-30 c30 am415 t10-30) --[taxi-booked-for uberx t13-30]--> (book-hotel hyattregency t16-00 c220 uberx t13-30)
+  (__init__) --[has-check-in hyattregency t16-00]--> (book-hotel hyattregency t16-00 c220 uberx t13-30)
+  (__init__) --[has-cost hyattregency c220]--> (book-hotel hyattregency t16-00 c220 uberx t13-30)
+  (__init__) --[next-available t13-30 t16-00]--> (book-hotel hyattregency t16-00 c220 uberx t13-30)
+INFO:modules.orchestrator:Hey! I'm your travel organizer. Starting the orchestration...
+INFO:modules.orchestrator:Starting the planning...
+INFO:modules.call_agent:Create new session.
+INFO:tools.get_session:____________________ Get current session
+INFO:modules.orchestrator:_____________ Current item to book: am415
+03:06:37 - LiteLLM:INFO: utils.py:3995 - 
+LiteLLM completion() model= gemma4:31b; provider = ollama_chat
+INFO:LiteLLM:
+LiteLLM completion() model= gemma4:31b; provider = ollama_chat
+INFO:modules.call_agent:
+
+INFO:modules.call_agent:____________________________________________________________________________________________________________________________________________
+INFO:modules.call_agent:Response from [selectAndBookObject]: The user wants me to book an object. I need to follow a specific sequence of tool calls:
+1.  `get_object_to_book` to find out what needs to be booked and its type.
+2.  `get_causal_link` to understand the causal link.
+3.  `get_available_objects` to see what's available.
+4.  `get_budget` to check the budget.
+5.  `get_violated_history` to avoid previously failed items.
+6.  Select the best object based on these inputs (cheapest, not in violated history, same type as the target object).
+7.  Call `book_object` or `replan`.
+
+Let's start by calling `get_object_to_book`.
+INFO:agents.booking_agent:
+
+INFO:agents.booking_agent:Getting object to book...
+INFO:agents.booking_agent:____________________________________________________________________________________________________________________________________________
+INFO:tools.get_session:____________________ Get current session
+INFO:agents.booking_agent:Current object to book: {'Object_type': 'flight', 'Object': 'am415'}.
+
+03:10:50 - LiteLLM:INFO: utils.py:3995 - 
+LiteLLM completion() model= gemma4:31b; provider = ollama_chat
+INFO:LiteLLM:
+LiteLLM completion() model= gemma4:31b; provider = ollama_chat
+INFO:modules.call_agent:
+
+INFO:modules.call_agent:____________________________________________________________________________________________________________________________________________
+INFO:modules.call_agent:Response from [selectAndBookObject]: The user wants me to book an object.
+I need to follow the steps outlined in the system prompt:
+1. Get the object to book and its type from `get_object_to_book_tool`. (Done: flight, am415)
+2. Call `get_causal_link_tool`.
+3. Call `get_available_objects_tool`.
+4. Call `get_budget_tool`.
+5. Call `get_violated_history_tool`.
+6. Select an object to book based on the causal link, budget, violated history, and object type.
+7. Book the object using `book_object_tool` or call `replan_tool` if no suitable object is found.
+
+Let's start by calling the required tools.
+INFO:agents.booking_agent:
+
+INFO:agents.booking_agent:Getting causal link...
+INFO:agents.booking_agent:____________________________________________________________________________________________________________________________________________
+INFO:agents.booking_agent:
+
+INFO:agents.booking_agent:Getting available objects...
+INFO:agents.booking_agent:
+
+INFO:agents.booking_agent:Getting budget...
+INFO:tools.get_session:____________________ Get current session
+INFO:agents.booking_agent:_____________________ Current budget: 215
+INFO:tools.get_session:____________________ Get current session
+03:10:58 - LiteLLM:INFO: utils.py:3995 - 
+LiteLLM completion() model= gemma4:31b; provider = ollama_chat
+INFO:LiteLLM:
+LiteLLM completion() model= gemma4:31b; provider = ollama_chat
+INFO:modules.call_agent:
+
+INFO:modules.call_agent:____________________________________________________________________________________________________________________________________________
+INFO:modules.call_agent:Response from [selectAndBookObject]: The user wants to book a flight.
+From `get_object_to_book_tool`, the current object to book is `am415` of type `flight`.
+From `get_causal_link_tool`, the causal link suggests booking flight `am415` with cost `c195` and arrival time `t10-30`.
+From `get_available_objects_tool`, the available flights from Denver to Chicago are:
+- FR740: cost 99, Arr_time t08-35
+- AM415: cost 195, Arr_time t10-30
+- UN920: cost 245, Arr_time t11-05
+- SO721: cost 189, Arr_time t00-50
+- UN722: cost 225, Arr_time t13-50
+- AM659: cost 210, Arr_time t16-20
+- SO238: cost 165, Arr_time t16-45
+- UN250: cost 275, Arr_time t18-05
+- UN784: cost 315, Arr_time t18-55
+- SO886: cost 175, Arr_time t20-20
+- FR637: cost 88, Arr_time t13-45
+
+Current budget is 215.
+`get_violated_history_tool` is empty.
+
+The target object is `am415`. Its cost is 195.
+195 <= 215, so it can be booked.
+The arrival time for `am415` is `t10-30`.
+
+I should book `am415` at `t10-30`.
+INFO:agents.booking_agent:
+
+INFO:agents.booking_agent:Booking object am415 ...
+INFO:agents.booking_agent:____________________________________________________________________________________________________________________________________________
+INFO:tools.get_session:____________________ Get current session
+INFO:root:__________________ Item cost:195, Current Budget: 215 -> Budget updated to: 20
+INFO:tools.get_session:____________________ Get current session
+INFO:agents.booking_agent:__________________ Booked object: am415
+
+INFO:tools.exit_tool:
+
+INFO:tools.exit_tool:
+ 	 	 	 	--- --- --- --- --- --- --- --- --- --- --- --- ---  Exit Loop triggered by selectAndBookObject  --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+INFO:tools.exit_tool:_________________________ Booked Items so far: [('am415', 't10-30')]
+INFO:modules.call_agent:
+
+INFO:modules.call_agent:	 	 	 **************************************************************************************************************
+INFO:modules.call_agent:	 	 	 	 	 Booked Items So Far: [('am415', 't10-30')]
+INFO:modules.call_agent:	 	 	 **************************************************************************************************************
+INFO:modules.call_agent:
+
+INFO:modules.execution_monitoring:____________________________________________________________________________________________________________________________________________
+INFO:modules.execution_monitoring:Starting the Execution Monitoring ...
+INFO:tools.get_booked_items:_________________________ Getting the booked items...
+INFO:tools.get_session:____________________ Get current session
+INFO:modules.execution_monitoring:__________	 Checking booked items timing feasibility...
+INFO:tools.get_booked_items:_________________________ Getting the booked items...
+INFO:tools.get_session:____________________ Get current session
+INFO:modules.execution_monitoring:Dependency graph: []
+INFO:modules.execution_monitoring:__________	 Checking whether booked items match the plan...
+INFO:modules.execution_monitoring:~*~~*~~*~~*~~*~~*~~*~~*~~*~~*~~*~~*~~*~~*~~*~~*~~*~~*~~*~~*~~*~~*~~*~~*~~*~~*~~*~~*~~*~~*~~*~~*~~*~~*~~*~~*~~*~~*~~*~~*~~*~~*~~*~~*~~*~~*~~*~~*~~*~~*~
+INFO:modules.execution_monitoring:	 Execution Monitoring check passed! (No plan contradiction or unachievable plan detected.
+INFO:modules.execution_monitoring:~*~~*~~*~~*~~*~~*~~*~~*~~*~~*~~*~~*~~*~~*~~*~~*~~*~~*~~*~~*~~*~~*~~*~~*~~*~~*~~*~~*~~*~~*~~*~~*~~*~~*~~*~~*~~*~~*~~*~~*~~*~~*~~*~~*~~*~~*~~*~~*~~*~~*~
+
+INFO:tools.get_session:____________________ Get current session
+INFO:tools.get_session:____________________ Get current session
+INFO:modules.orchestrator:_____________ Current item to book: uberx
+03:11:07 - LiteLLM:INFO: utils.py:3995 - 
+LiteLLM completion() model= gemma4:31b; provider = ollama_chat
+INFO:LiteLLM:
+LiteLLM completion() model= gemma4:31b; provider = ollama_chat
+INFO:modules.call_agent:
+
+INFO:modules.call_agent:____________________________________________________________________________________________________________________________________________
+INFO:modules.call_agent:Response from [selectAndBookObject]: The user wants me to book an object.
+I need to follow the system prompt's strict rules.
+
+1.  **Get the object to book and its type**: I'll call `get_object_to_book_tool`.
+2.  **Get the causal link**: I'll call `get_causal_link_tool`.
+3.  **Get available objects**: I'll call `get_available_objects_tool`.
+4.  **Get current budget**: I'll call `get_budget_tool`.
+5.  **Get violated history**: I'll call `get_violated_history_tool`.
+6.  **Select and book**:
+    *   Identify the target object and type from step 1.
+    *   Check the causal link for the preferred object.
+    *   Check available objects of the same type.
+    *   Filter out objects in the violated history.
+    *   Check if the budget allows booking.
+    *   If the preferred object is available and affordable, book it.
+    *   If not, look for the cheapest alternative of the same type that is affordable and not in the violated history.
+    *   If no object of that type can be booked, call `replan_tool`.
+    *   If an object is found, call `book_object_tool`.
+
+Let's start.
+INFO:agents.booking_agent:
+
+INFO:agents.booking_agent:Getting object to book...
+INFO:agents.booking_agent:____________________________________________________________________________________________________________________________________________
+INFO:tools.get_session:____________________ Get current session
+INFO:agents.booking_agent:Current object to book: {'Object_type': 'taxi', 'Object': 'uberx'}.
+
+INFO:agents.booking_agent:
+
+INFO:agents.booking_agent:Getting causal link...
+INFO:agents.booking_agent:____________________________________________________________________________________________________________________________________________
+INFO:agents.booking_agent:
+
+INFO:agents.booking_agent:Getting available objects...
+INFO:agents.booking_agent:
+
+INFO:agents.booking_agent:Getting budget...
+INFO:tools.get_session:____________________ Get current session
+INFO:agents.booking_agent:_____________________ Current budget: 20
+INFO:tools.get_session:____________________ Get current session
+03:11:14 - LiteLLM:INFO: utils.py:3995 - 
+LiteLLM completion() model= gemma4:31b; provider = ollama_chat
+INFO:LiteLLM:
+LiteLLM completion() model= gemma4:31b; provider = ollama_chat
+INFO:modules.call_agent:
+
+INFO:modules.call_agent:____________________________________________________________________________________________________________________________________________
+INFO:modules.call_agent:Response from [selectAndBookObject]: The user wants to book a taxi.
+The current object to book is `uberx` of type `taxi`.
+The causal link suggests booking `uberx` at `t13-30` with cost `c30`.
+The available taxis are:
+- curb: c10 at t18-00, t20-20
+- uberx: c30 at t09-00, t13-30, t18-00, t23-00
+- uber-black: c50 at t11-05, t15-30, t20-00, t22-50
+- lyft: c30 at t10-30, t14-10, t18-55, t22-10
+- lyft-lux: c50 at t09-30, t13-50, t16-45, t21-30
+- yellow-cab: c30 at t08-35, t12-45, t17-00, t21-15
+- private-limo: c60 at t08-00, t14-35, t19-00, t23-00
+
+The current budget is 20.
+The desired object `uberx` costs 30, which exceeds the budget.
+I need to look for alternative items of the same type (`taxi`) that fit within the budget.
+Available taxis within budget (cost <= 20):
+- curb: cost c10 at t18-00
+- curb: cost c10 at t20-20
+
+The rule says: "If there is more than one possible item, select the one that is cheaper and is not in 'get_violated_history_tool' output."
+Both `curb` options cost 10.
+The violated history is empty.
+I can pick either `curb` at `t18-00` or `t20-20`.
+Wait, the prompt says "If no object of the desired type can be booked, IMMEDIATELY call 'replan_tool'".
+But I found `curb` which is a taxi.
+Let's check if `curb` is a valid alternative for `uberx`. Yes, they are both taxis.
+Between the two `curb` options, they have the same price. I'll pick one.
+Wait, the prompt says "If you can’t book the exact item in the casual link, look for alternative items of the same type to book."
+The type is `taxi`. `curb` is a taxi.
+Cost of `curb` is 10. Budget is 20.
+I will book `curb` at `t18-00`.
+
+Wait, let me double check the budget. Budget is 20.
+`uberx` cost is 30.
+`curb` cost is 10.
+`curb` is available.
+I will book `curb` at `t18-00`.
+INFO:agents.booking_agent:
+
+INFO:agents.booking_agent:Booking object curb ...
+INFO:agents.booking_agent:____________________________________________________________________________________________________________________________________________
+INFO:tools.get_session:____________________ Get current session
+INFO:root:__________________ Item cost:10, Current Budget: 20 -> Budget updated to: 10
+INFO:tools.get_session:____________________ Get current session
+INFO:agents.booking_agent:__________________ Booked object: curb
+
+INFO:tools.exit_tool:
+
+INFO:tools.exit_tool:
+ 	 	 	 	--- --- --- --- --- --- --- --- --- --- --- --- ---  Exit Loop triggered by selectAndBookObject  --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+INFO:tools.exit_tool:_________________________ Booked Items so far: [('am415', 't10-30'), ('curb', 't18-00')]
+INFO:modules.call_agent:
+
+INFO:modules.call_agent:	 	 	 **************************************************************************************************************
+INFO:modules.call_agent:	 	 	 	 	 Booked Items So Far: [('am415', 't10-30'), ('curb', 't18-00')]
+INFO:modules.call_agent:	 	 	 **************************************************************************************************************
+INFO:modules.call_agent:
+
+INFO:modules.execution_monitoring:____________________________________________________________________________________________________________________________________________
+INFO:modules.execution_monitoring:Starting the Execution Monitoring ...
+INFO:tools.get_booked_items:_________________________ Getting the booked items...
+INFO:tools.get_session:____________________ Get current session
+INFO:modules.execution_monitoring:__________	 Checking booked items timing feasibility...
+INFO:tools.get_booked_items:_________________________ Getting the booked items...
+INFO:tools.get_session:____________________ Get current session
+INFO:tools.get_booked_items:_________________________ Getting the booked items...
+INFO:tools.get_session:____________________ Get current session
+INFO:modules.execution_monitoring:Dependency graph: [(('am415', 't10-30'), ('curb', 't18-00'))]
+INFO:modules.execution_monitoring:__________	 Checking whether booked items match the plan...
+INFO:modules.execution_monitoring:
+ 	 X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X  PLAN CONTRADICTION found on curb X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X 
+
+INFO:pddl_helpers.update_pddl_model:__________	 Updating PDDL model and replanning...
+INFO:agents.predicate_searcher_agent:____________________________________________________________________________________________________________________________________________
+INFO:agents.predicate_searcher_agent:Running the predicate searcher agent ...
+INFO:modules.call_agent:Retrieved existing session.
+WARNING:google_adk.google.adk.runners:Event from an unknown agent: selectAndBookObject, event id: fa0a27d2-ae79-43bf-9073-c9062da51d8a
+WARNING:google_adk.google.adk.runners:Event from an unknown agent: selectAndBookObject, event id: 42c4af5e-e746-4c2e-923d-b4a376eef8f6
+WARNING:google_adk.google.adk.runners:Event from an unknown agent: selectAndBookObject, event id: 8d9d6c48-c5cc-4f09-8fee-63412d1e8609
+WARNING:google_adk.google.adk.runners:Event from an unknown agent: selectAndBookObject, event id: ab5ba187-558c-4528-a30b-7776af449993
+WARNING:google_adk.google.adk.runners:Event from an unknown agent: selectAndBookObject, event id: 3e256d64-9f3c-4bed-9509-fc0b7ba17740
+WARNING:google_adk.google.adk.runners:Event from an unknown agent: selectAndBookObject, event id: d8770967-f415-468c-8db8-3d99850e63ae
+WARNING:google_adk.google.adk.runners:Event from an unknown agent: selectAndBookObject, event id: 6077053a-222c-4b11-a621-3415bd7c4386
+WARNING:google_adk.google.adk.runners:Event from an unknown agent: selectAndBookObject, event id: 38dc82bb-5001-46e0-8b69-1a73ff284fe3
+WARNING:google_adk.google.adk.runners:Event from an unknown agent: selectAndBookObject, event id: 53e4d037-4c6a-48d7-8449-d41f1226a694
+WARNING:google_adk.google.adk.runners:Event from an unknown agent: selectAndBookObject, event id: 6a23ec0e-798b-4289-9703-49df17d83c64
+03:11:29 - LiteLLM:INFO: utils.py:3995 - 
+LiteLLM completion() model= gemma4:31b; provider = ollama_chat
+INFO:LiteLLM:
+LiteLLM completion() model= gemma4:31b; provider = ollama_chat
+INFO:modules.call_agent:
+
+INFO:modules.call_agent:____________________________________________________________________________________________________________________________________________
+INFO:modules.call_agent:Response from [predicateTrackerAgent]: The user wants me to act as the `predicateTrackerAgent`.
+My task is to:
+1. Call `get_pddl_tool` (which is `get_pddl` in the tool definitions).
+2. Call `get_booked_items_tool` (which is `get_booked_items` in the tool definitions).
+3. Identify which predicates in the PDDL model are affected by the booked items.
+4. Call `update_pddl_model_tool` (which is `update_pddl_model` in the tool definitions) with the affected predicates.
+
+Let's start by calling `get_pddl` and `get_booked_items`.
+INFO:agents.predicate_searcher_agent:Getting booked items...
+INFO:tools.get_session:____________________ Get current session
+03:11:35 - LiteLLM:INFO: utils.py:3995 - 
+LiteLLM completion() model= gemma4:31b; provider = ollama_chat
+INFO:LiteLLM:
+LiteLLM completion() model= gemma4:31b; provider = ollama_chat
+INFO:modules.call_agent:
+
+INFO:modules.call_agent:____________________________________________________________________________________________________________________________________________
+INFO:modules.call_agent:Response from [predicateTrackerAgent]: The user wants me to update the PDDL model based on the booked items.
+
+1.  **Get PDDL model**: I have already called `get_pddl` and have the domain and problem.
+2.  **Get booked items**: I have already called `get_booked_items` and got `[('am415', 't10-30'), ('curb', 't18-00')]`.
+3.  **Identify affected predicates**:
+    *   For `am415` (flight) booked for `t10-30`:
+        *   Looking at the `book-flight` action in the domain:
+            *   Effect: `(flight-booked-for ?f ?arr)` and `(any-flight-booked)`.
+            *   So, `(flight-booked-for am415 t10-30)` and `(any-flight-booked)` are affected.
+    *   For `curb` (taxi) booked for `t18-00`:
+        *   Looking at the `book-taxi` action in the domain:
+            *   Effect: `(any-taxi-booked)` and `(taxi-booked-for ?t ?avail)`.
+            *   So, `(any-taxi-booked)` and `(taxi-booked-for curb t18-00)` are affected.
+
+4.  **Format for `update_pddl_model_tool`**:
+    *   `am415`: `['flight-booked-for am415 t10-30', 'any-flight-booked']`
+    *   `curb`: `['taxi-booked-for curb t18-00', 'any-taxi-booked']`
+
+Wait, the prompt says "find which predicates in the PDDL model are affected by the booked items".
+The booked items are `('am415', 't10-30')` and `('curb', 't18-00')`.
+
+Let's double check the domain:
+- `book-flight` effect: `(flight-booked-for ?f ?arr) (any-flight-booked)`
+- `book-taxi` effect: `(any-taxi-booked) (taxi-booked-for ?t ?avail)`
+- `book-hotel` effect: `(hotel-booked-for ?h ?checkin) (any-hotel-booked)`
+
+So for `am415` at `t10-30`: `flight-booked-for am415 t10-30`, `any-flight-booked`.
+For `curb` at `t18-00`: `taxi-booked-for curb t18-00`, `any-taxi-booked`.
+
+I will now call `update_pddl_model`.
+INFO:agents.predicate_searcher_agent:Affected predicates: {'am415': ['flight-booked-for am415 t10-30', 'any-flight-booked'], 'curb': ['taxi-booked-for curb t18-00', 'any-taxi-booked']}
+INFO:agents.predicate_searcher_agent:PDDL model updated.
+INFO:tools.exit_tool:
+
+INFO:tools.exit_tool:
+ 	 	 	 	--- --- --- --- --- --- --- --- --- --- --- --- ---  Exit Loop triggered by predicateTrackerAgent  --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+INFO:tools.exit_tool:_________________________ Booked Items so far: [('am415', 't10-30'), ('curb', 't18-00')]
+INFO:modules.call_agent:
+
+INFO:modules.call_agent:	 	 	 **************************************************************************************************************
+INFO:modules.call_agent:	 	 	 	 	 Booked Items So Far: [('am415', 't10-30'), ('curb', 't18-00')]
+INFO:modules.call_agent:	 	 	 **************************************************************************************************************
+INFO:modules.call_agent:
+
+INFO:pddl_helpers.update_pddl_model:__________	 Replanning, based on the current state and booked items so far ... 
+
+INFO:pddl_helpers.pddl_planner: Running PDDL Planner...
+INFO:pddl_helpers.pddl_planner: Plan found!
+INFO:pddl_helpers.update_pddl_model:__________	 New plan achieved: (book-hotel intercontinental t20-00 c275 curb t18-00)
+INFO:pddl_helpers.update_pddl_model:__________	 Continue the planning...
+INFO:tools.get_session:____________________ Get current session
+INFO:tools.get_session:____________________ Get current session
+INFO:modules.orchestrator:_____________ Current item to book: intercontinental
+WARNING:google_adk.google.adk.runners:Event from an unknown agent: predicateTrackerAgent, event id: c9f429e8-a969-41b0-af22-3dc74876feab
+WARNING:google_adk.google.adk.runners:Event from an unknown agent: predicateTrackerAgent, event id: 21ee5254-8c5d-432c-843c-812f26386485
+WARNING:google_adk.google.adk.runners:Event from an unknown agent: predicateTrackerAgent, event id: e89f8513-e170-4f15-9a85-711f46cc4388
+WARNING:google_adk.google.adk.runners:Event from an unknown agent: predicateTrackerAgent, event id: d9b825a3-fad9-4488-9858-45ca10e54e01
+03:11:53 - LiteLLM:INFO: utils.py:3995 - 
+LiteLLM completion() model= gemma4:31b; provider = ollama_chat
+INFO:LiteLLM:
+LiteLLM completion() model= gemma4:31b; provider = ollama_chat
+INFO:modules.call_agent:
+
+INFO:modules.call_agent:____________________________________________________________________________________________________________________________________________
+INFO:modules.call_agent:Response from [selectAndBookObject]: The user wants me to book an object.
+I need to follow the system prompt's strict rules.
+
+1.  **Get the object to book and its type**: Call `get_object_to_book_tool`.
+2.  **Get the causal link**: Call `get_causal_link_tool`.
+3.  **Get available objects**: Call `get_available_objects_tool`.
+4.  **Get current budget**: Call `get_budget_tool`.
+5.  **Get violated history**: Call `get_violated_history_tool`.
+6.  **Select and book**:
+    *   Check the causal link for the desired object.
+    *   Check if the desired object is available and within budget.
+    *   Check if it's in the violated history.
+    *   If not bookable, look for alternatives of the same type.
+    *   If multiple alternatives, pick the cheapest one not in violated history.
+    *   If no object of that type can be booked, call `replan_tool`.
+    *   Otherwise, call `book_object_tool`.
+
+Let's start by calling the first few tools.
+INFO:agents.booking_agent:
+
+INFO:agents.booking_agent:Getting object to book...
+INFO:agents.booking_agent:____________________________________________________________________________________________________________________________________________
+INFO:tools.get_session:____________________ Get current session
+INFO:agents.booking_agent:Current object to book: {'Object_type': 'hotel', 'Object': 'intercontinental'}.
+
+INFO:agents.booking_agent:
+
+INFO:agents.booking_agent:Getting causal link...
+INFO:agents.booking_agent:____________________________________________________________________________________________________________________________________________
+INFO:agents.booking_agent:
+
+INFO:agents.booking_agent:Getting available objects...
+INFO:agents.booking_agent:
+
+INFO:agents.booking_agent:Getting budget...
+INFO:tools.get_session:____________________ Get current session
+INFO:agents.booking_agent:_____________________ Current budget: 10
+INFO:tools.get_session:____________________ Get current session
+03:12:04 - LiteLLM:INFO: utils.py:3995 - 
+LiteLLM completion() model= gemma4:31b; provider = ollama_chat
+INFO:LiteLLM:
+LiteLLM completion() model= gemma4:31b; provider = ollama_chat
+INFO:modules.call_agent:
+
+INFO:modules.call_agent:____________________________________________________________________________________________________________________________________________
+INFO:modules.call_agent:Response from [selectAndBookObject]: The user wants me to book a hotel.
+The current object to book is `intercontinental` of type `hotel`.
+The causal link suggests `hyattregency` with check-in `t16-00` and cost `c220`.
+However, the current budget is `10`.
+I need to find a hotel of type `hotel` that costs `10` or less and is not in the violated history.
+Looking at the available hotels:
+- `hotelfelix`: 145
+- `freehandchicago`: 130
+- `staypineapple`: 10
+- `thelangham`: 550
+- `palmerhouse`: 50
+- `swissotel`: 240
+- `thegwen`: 80
+- `waldorfastoria`: 650
+- `hyattregency`: 220
+- `virginhotels`: 290
+- `congressplaza`: 160
+- `londonhouse`: 410
+- `intercontinental`: 275
+- `thedrake`: 320
+- `viceroychicago`: 5
+
+The hotels that fit the budget (<= 10) are `staypineapple` (10) and `viceroychicago` (5).
+The rule says: "If there is more than one possible item, select the one that is cheaper".
+`viceroychicago` is cheaper (5 < 10).
+Check if `viceroychicago` is in the violated history: `[]`. It is not.
+The check-in time for `viceroychicago` is `t17-00`.
+
+Therefore, I should book `viceroychicago` at `t17-00`.
+INFO:agents.booking_agent:
+
+INFO:agents.booking_agent:Booking object viceroychicago ...
+INFO:agents.booking_agent:____________________________________________________________________________________________________________________________________________
+INFO:tools.get_session:____________________ Get current session
+INFO:root:__________________ Item cost:5, Current Budget: 10 -> Budget updated to: 5
+INFO:tools.get_session:____________________ Get current session
+INFO:agents.booking_agent:__________________ Booked object: viceroychicago
+
+INFO:tools.exit_tool:
+
+INFO:tools.exit_tool:
+ 	 	 	 	--- --- --- --- --- --- --- --- --- --- --- --- ---  Exit Loop triggered by selectAndBookObject  --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+INFO:tools.exit_tool:_________________________ Booked Items so far: [('am415', 't10-30'), ('curb', 't18-00'), ('viceroychicago', 't17-00')]
+INFO:modules.call_agent:
+
+INFO:modules.call_agent:	 	 	 **************************************************************************************************************
+INFO:modules.call_agent:	 	 	 	 	 Booked Items So Far: [('am415', 't10-30'), ('curb', 't18-00'), ('viceroychicago', 't17-00')]
+INFO:modules.call_agent:	 	 	 **************************************************************************************************************
+INFO:modules.call_agent:
+
+INFO:modules.execution_monitoring:____________________________________________________________________________________________________________________________________________
+INFO:modules.execution_monitoring:Starting the Execution Monitoring ...
+INFO:tools.get_booked_items:_________________________ Getting the booked items...
+INFO:tools.get_session:____________________ Get current session
+INFO:modules.execution_monitoring:__________	 Checking booked items timing feasibility...
+INFO:tools.get_booked_items:_________________________ Getting the booked items...
+INFO:tools.get_session:____________________ Get current session
+INFO:tools.get_booked_items:_________________________ Getting the booked items...
+INFO:tools.get_session:____________________ Get current session
+INFO:tools.get_booked_items:_________________________ Getting the booked items...
+INFO:tools.get_session:____________________ Get current session
+INFO:tools.get_booked_items:_________________________ Getting the booked items...
+INFO:tools.get_session:____________________ Get current session
+INFO:modules.execution_monitoring:Dependency graph: [(('am415', 't10-30'), ('curb', 't18-00')), (('curb', 't18-00'), ('viceroychicago', 't17-00'))]
+INFO:modules.execution_monitoring:
+ 	 X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X  PLAN UNACHIEVABLE found on ('viceroychicago', 't17-00') X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X 
+
+INFO:pddl_helpers.update_pddl_model:__________	 Updating PDDL model and replanning...
+INFO:tools.get_session:____________________ Get current session
+INFO:pddl_helpers.pddl_planner:__________	 Reverting PDDL model for ('viceroychicago', 't17-00')...
+INFO:root:__________________ Item cost:5, Current Budget: 5 -> Budget updated to: 10
+INFO:pddl_helpers.pddl_planner:__________	 Updated booked items: [('am415', 't10-30'), ('curb', 't18-00')]
+INFO:agents.predicate_searcher_agent:____________________________________________________________________________________________________________________________________________
+INFO:agents.predicate_searcher_agent:Running the predicate searcher agent ...
+INFO:modules.call_agent:Retrieved existing session.
+WARNING:google_adk.google.adk.runners:Event from an unknown agent: selectAndBookObject, event id: b8eb8fa7-5277-466a-bfe7-6addc7f0b761
+WARNING:google_adk.google.adk.runners:Event from an unknown agent: selectAndBookObject, event id: 6c1d73ab-133c-48ac-a3c8-d4dee516a3aa
+WARNING:google_adk.google.adk.runners:Event from an unknown agent: selectAndBookObject, event id: 38751fc0-6264-4cac-80a5-17c48729187c
+WARNING:google_adk.google.adk.runners:Event from an unknown agent: selectAndBookObject, event id: f5f968bf-34bb-420c-ba3a-97dddb4bc1b6
+03:12:13 - LiteLLM:INFO: utils.py:3995 - 
+LiteLLM completion() model= gemma4:31b; provider = ollama_chat
+INFO:LiteLLM:
+LiteLLM completion() model= gemma4:31b; provider = ollama_chat
+INFO:modules.call_agent:
+
+INFO:modules.call_agent:____________________________________________________________________________________________________________________________________________
+INFO:modules.call_agent:Response from [predicateTrackerAgent]: The user wants me to track predicates affected by booked items.
+I need to:
+1. Call `get_pddl_tool` to get the current PDDL model.
+2. Call `get_booked_items_tool` to get the list of booked items.
+3. Identify which predicates in the PDDL model are affected by these booked items.
+4. Call `update_pddl_model_tool` with the affected predicates.
+
+Let's start by calling `get_pddl` and `get_booked_items`.
+INFO:agents.predicate_searcher_agent:Getting booked items...
+INFO:tools.get_session:____________________ Get current session
+03:12:23 - LiteLLM:INFO: utils.py:3995 - 
+LiteLLM completion() model= gemma4:31b; provider = ollama_chat
+INFO:LiteLLM:
+LiteLLM completion() model= gemma4:31b; provider = ollama_chat
+INFO:modules.call_agent:
+
+INFO:modules.call_agent:____________________________________________________________________________________________________________________________________________
+INFO:modules.call_agent:Response from [predicateTrackerAgent]: The user wants me to update the PDDL model based on the booked items.
+
+1.  **Get PDDL model**: I have already called `get_pddl` and have the domain and problem.
+2.  **Get booked items**: I have already called `get_booked_items` and got `[('am415', 't10-30'), ('curb', 't18-00')]`. Wait, the prompt says "do not refer to results from previous turns, as they may be outdated". I must call them again.
+3.  **Identify affected predicates**:
+    *   For `am415` (flight) booked for `t10-30`:
+        *   `flight-booked-for am415 t10-30` should be true.
+        *   `any-flight-booked` should be true.
+    *   For `curb` (taxi) booked for `t18-00`:
+        *   `taxi-booked-for curb t18-00` should be true.
+        *   `any-taxi-booked` should be true.
+    *   Wait, the context also shows `viceroychicago` was booked for `t17-00` in the last turn. Let me check the `get_booked_items` tool output again.
+    *   The `get_booked_items` tool output provided in the *last* turn was `[('am415', 't10-30'), ('curb', 't18-00')]`. But the user just said `book_object` for `viceroychicago` was successful.
+    *   I must call `get_booked_items` and `get_pddl` now to be sure.
+
+Let's re-evaluate the process:
+1. Call `get_pddl`.
+2. Call `get_booked_items`.
+3. Determine which predicates are affected.
+    *   If a flight `f` is booked for time `arr`, then `(flight-booked-for f arr)` and `(any-flight-booked)` are affected.
+    *   If a taxi `t` is booked for time `avail`, then `(taxi-booked-for t avail)` and `(any-taxi-booked)` are affected.
+    *   If a hotel `h` is booked for time `checkin`, then `(hotel-booked-for h checkin)` and `(any-hotel-booked)` are affected.
+4. Call `update_pddl_model` with the mapping.
+
+Let's start by calling the tools.
+INFO:agents.predicate_searcher_agent:Getting booked items...
+INFO:tools.get_session:____________________ Get current session
+03:12:36 - LiteLLM:INFO: utils.py:3995 - 
+LiteLLM completion() model= gemma4:31b; provider = ollama_chat
+INFO:LiteLLM:
+LiteLLM completion() model= gemma4:31b; provider = ollama_chat
+INFO:modules.call_agent:
+
+INFO:modules.call_agent:____________________________________________________________________________________________________________________________________________
+INFO:modules.call_agent:Response from [predicateTrackerAgent]: The user wants me to update the PDDL model based on the booked items.
+
+1.  **Get PDDL model**: I've already called `get_pddl` in the previous turn, but the system prompt says "Do not use the object provided in the context or conversation history... trust the tool output." So I must call `get_pddl` and `get_booked_items` again.
+2.  **Get booked items**: I must call `get_booked_items`.
+3.  **Identify affected predicates**:
+    *   Booked items are: `('am415', 't10-30')`, `('curb', 't18-00')`, and `('viceroychicago', 't17-00')` (Wait, the last turn showed `viceroychicago` was booked, but the `get_booked_items` tool output in the context only showed `am415` and `curb`. I must trust the tool output of `get_booked_items` when I call it now).
+    *   Looking at the PDDL:
+        *   `book-flight` action: effects are `(flight-booked-for ?f ?arr)` and `(any-flight-booked)`.
+        *   `book-taxi` action: effects are `(any-taxi-booked)` and `(taxi-booked-for ?t ?avail)`.
+        *   `book-hotel` action: effects are `(hotel-booked-for ?h ?checkin)` and `(any-hotel-booked)`.
+4.  **Map booked items to predicates**:
+    *   If `am415` is booked for `t10-30`: `flight-booked-for am415 t10-30`, `any-flight-booked`.
+    *   If `curb` is booked for `t18-00`: `taxi-booked-for curb t18-00`, `any-taxi-booked`.
+    *   If `viceroychicago` is booked for `t17-00`: `hotel-booked-for viceroychicago t17-00`, `any-hotel-booked`.
+5.  **Execute `update_pddl_model_tool`**: Pass the mapping.
+
+Let's start by calling the tools.
+INFO:agents.predicate_searcher_agent:Getting booked items...
+INFO:tools.get_session:____________________ Get current session
+03:12:49 - LiteLLM:INFO: utils.py:3995 - 
+LiteLLM completion() model= gemma4:31b; provider = ollama_chat
+INFO:LiteLLM:
+LiteLLM completion() model= gemma4:31b; provider = ollama_chat
+INFO:modules.call_agent:
+
+INFO:modules.call_agent:____________________________________________________________________________________________________________________________________________
+INFO:modules.call_agent:Response from [predicateTrackerAgent]: The user wants me to update the PDDL model based on the booked items.
+
+1.  **Get PDDL model**: I've already called `get_pddl` and have the domain and problem.
+2.  **Get booked items**: I've already called `get_booked_items` and have the list: `[('am415', 't10-30'), ('curb', 't18-00')]`. Wait, the context shows a third item was booked: `viceroychicago` at `t17-00`. Let me check the `get_booked_items` output again.
+    *   The last `get_booked_items` call returned `[('am415', 't10-30'), ('curb', 't18-00')]`.
+    *   However, the conversation history shows `book_object` was called for `viceroychicago` at `t17-00` and returned SUCCESS.
+    *   The system prompt says: "trust the tool output. If there was an item in the context history but not in the tool output, it means that item has been removed so ignore it."
+    *   So I must only consider `('am415', 't10-30')` and `('curb', 't18-00')`.
+
+3.  **Identify affected predicates**:
+    *   For `am415` (flight) at `t10-30`:
+        *   `flight-booked-for am415 t10-30`
+        *   `any-flight-booked`
+    *   For `curb` (taxi) at `t18-00`:
+        *   `taxi-booked-for curb t18-00`
+        *   `any-taxi-booked`
+
+4.  **Format for `update_pddl_model_tool`**:
+    *   `am415`: `['flight-booked-for am415 t10-30', 'any-flight-booked']`
+    *   `curb`: `['taxi-booked-for curb t18-00', 'any-taxi-booked']`
+
+Wait, let me double check the `get_booked_items` output one more time.
+The most recent `get_booked_items` output is `booked items: [('am415', 't10-30'), ('curb', 't18-00')]`.
+The `viceroychicago` booking is NOT in the tool output. I must ignore it.
+
+Let's refine the predicates:
+- `am415` is a flight. Booking it results in `(flight-booked-for am415 t10-30)` and `(any-flight-booked)`.
+- `curb` is a taxi. Booking it results in `(taxi-booked-for curb t18-00)` and `(any-taxi-booked)`.
+
+Wait, looking at the domain:
+- `book-flight` effect: `(and (flight-booked-for ?f ?arr) (any-flight-booked))`
+- `book-taxi` effect: `(and (any-taxi-booked) (taxi-booked-for ?t ?avail))`
+- `book-hotel` effect: `(and (hotel-booked-for ?h ?checkin) (any-hotel-booked))`
+
+So for `am415` at `t10-30`: `flight-booked-for am415 t10-30`, `any-flight-booked`.
+For `curb` at `t18-00`: `taxi-booked-for curb t18-00`, `any-taxi-booked`.
+
+I will now call `update_pddl_model`.
+INFO:agents.predicate_searcher_agent:Affected predicates: {'am415': ['flight-booked-for am415 t10-30', 'any-flight-booked'], 'curb': ['taxi-booked-for curb t18-00', 'any-taxi-booked']}
+INFO:agents.predicate_searcher_agent:PDDL model updated.
+INFO:tools.exit_tool:
+
+INFO:tools.exit_tool:
+ 	 	 	 	--- --- --- --- --- --- --- --- --- --- --- --- ---  Exit Loop triggered by predicateTrackerAgent  --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+INFO:tools.exit_tool:_________________________ Booked Items so far: [('am415', 't10-30'), ('curb', 't18-00')]
+INFO:modules.call_agent:
+
+INFO:modules.call_agent:	 	 	 **************************************************************************************************************
+INFO:modules.call_agent:	 	 	 	 	 Booked Items So Far: [('am415', 't10-30'), ('curb', 't18-00')]
+INFO:modules.call_agent:	 	 	 **************************************************************************************************************
+INFO:modules.call_agent:
+
+INFO:pddl_helpers.update_pddl_model:__________	 Replanning, based on the current state and booked items so far ... 
+
+INFO:pddl_helpers.pddl_planner: Running PDDL Planner...
+INFO:pddl_helpers.pddl_planner: Plan found!
+INFO:pddl_helpers.update_pddl_model:__________	 New plan achieved: (book-hotel intercontinental t20-00 c275 curb t18-00)
+INFO:pddl_helpers.update_pddl_model:__________	 Continue the planning...
+INFO:tools.get_session:____________________ Get current session
+INFO:tools.get_session:____________________ Get current session
+INFO:modules.orchestrator:_____________ Current item to book: intercontinental
+WARNING:google_adk.google.adk.runners:Event from an unknown agent: predicateTrackerAgent, event id: 1ec572ca-2c13-4ba9-8eac-c6d5f902c01e
+WARNING:google_adk.google.adk.runners:Event from an unknown agent: predicateTrackerAgent, event id: d80a31c6-4fb2-42b8-8eae-352ac2004df4
+WARNING:google_adk.google.adk.runners:Event from an unknown agent: predicateTrackerAgent, event id: 8563f66b-a73d-4bbe-97aa-744277ff2ff1
+WARNING:google_adk.google.adk.runners:Event from an unknown agent: predicateTrackerAgent, event id: 4a2dcff9-7c9f-49cd-891f-2dea1daeb713
+WARNING:google_adk.google.adk.runners:Event from an unknown agent: predicateTrackerAgent, event id: 49d07229-830f-4816-8f8b-d82198d2c00b
+WARNING:google_adk.google.adk.runners:Event from an unknown agent: predicateTrackerAgent, event id: ca40cd52-460f-4dcd-a60d-cb402792cb99
+WARNING:google_adk.google.adk.runners:Event from an unknown agent: predicateTrackerAgent, event id: 95e87834-016c-4002-946d-936903d63a4d
+WARNING:google_adk.google.adk.runners:Event from an unknown agent: predicateTrackerAgent, event id: 81f7d29a-8afd-4366-a18e-5d8a3730297f
+03:13:11 - LiteLLM:INFO: utils.py:3995 - 
+LiteLLM completion() model= gemma4:31b; provider = ollama_chat
+INFO:LiteLLM:
+LiteLLM completion() model= gemma4:31b; provider = ollama_chat
+INFO:modules.call_agent:
+
+INFO:modules.call_agent:____________________________________________________________________________________________________________________________________________
+INFO:modules.call_agent:Response from [selectAndBookObject]: The user wants me to book an object.
+I need to follow the system prompt's steps:
+1. Get the object to book and its type using `get_object_to_book_tool`.
+2. Get the causal link using `get_causal_link_tool`.
+3. Get available objects using `get_available_objects_tool`.
+4. Get the current budget using `get_budget_tool`.
+5. Get the violated history using `get_violated_history_tool`.
+6. Select an object to book based on the causal link, budget, violated history, and object type.
+7. If no object of the desired type can be booked, call `replan_tool`.
+8. If an object can be booked, call `book_object_tool` with the selected object and its time.
+
+Let's start by calling the tools.
+INFO:agents.booking_agent:
+
+INFO:agents.booking_agent:Getting object to book...
+INFO:agents.booking_agent:____________________________________________________________________________________________________________________________________________
+INFO:tools.get_session:____________________ Get current session
+INFO:agents.booking_agent:Current object to book: {'Object_type': 'hotel', 'Object': 'intercontinental'}.
+
+INFO:agents.booking_agent:
+
+INFO:agents.booking_agent:Getting causal link...
+INFO:agents.booking_agent:____________________________________________________________________________________________________________________________________________
+INFO:agents.booking_agent:
+
+INFO:agents.booking_agent:Getting available objects...
+INFO:agents.booking_agent:
+
+INFO:agents.booking_agent:Getting budget...
+INFO:tools.get_session:____________________ Get current session
+INFO:agents.booking_agent:_____________________ Current budget: 10
+INFO:tools.get_session:____________________ Get current session
+03:13:29 - LiteLLM:INFO: utils.py:3995 - 
+LiteLLM completion() model= gemma4:31b; provider = ollama_chat
+INFO:LiteLLM:
+LiteLLM completion() model= gemma4:31b; provider = ollama_chat
+INFO:modules.call_agent:
+
+INFO:modules.call_agent:____________________________________________________________________________________________________________________________________________
+INFO:modules.call_agent:Response from [selectAndBookObject]: The user wants me to book a hotel.
+1.  **Get object to book**: The `get_object_to_book_tool` returned `{'Object_type': 'hotel', 'Object': 'intercontinental'}`.
+2.  **Causal Link**: The causal link suggests booking `hyattregency` at `t16-00` with cost `c220`.
+3.  **Available Objects**: I have a list of hotels.
+    *   `hotelfelix`: cost 145, check-in t08-00
+    *   `freehandchicago`: cost 130, check-in t09-30
+    *   `staypineapple`: cost 10, check-in t22-00
+    *   `thelangham`: cost 550, check-in t11-00
+    *   `palmerhouse`: cost 50, check-in t12-00
+    *   `swissotel`: cost 240, check-in t13-30
+    *   `thegwen`: cost 80, check-in t14-00
+    *   `waldorfastoria`: cost 650, check-in t15-00
+    *   `hyattregency`: cost 220, check-in t16-00
+    *   `virginhotels`: cost 290, check-in t17-00
+    *   `congressplaza`: cost 160, check-in t18-00
+    *   `londonhouse`: cost 410, check-in t19-00
+    *   `intercontinental`: cost 275, check-in t20-00
+    *   `thedrake`: cost 320, check-in t21-00
+    *   `viceroychicago`: cost 5, check-in t17-00
+4.  **Budget**: The current budget is `10`.
+5.  **Violated History**: `viceroychicago` at `t17-00` should not be booked.
+6.  **Selection**:
+    *   The target object is `intercontinental` (cost 275), but the budget is only 10.
+    *   The causal link suggests `hyattregency` (cost 220), but the budget is only 10.
+    *   I need to find a hotel of the same type (`hotel`) that fits the budget (<= 10) and is not in the violated history.
+    *   Looking at the list:
+        *   `staypineapple`: cost 10, check-in t22-00. This fits the budget and is not in the violated history.
+        *   `viceroychicago`: cost 5, but it is in the violated history.
+    *   The only viable option is `staypineapple`.
+
+Therefore, I should book `staypineapple` at `t22-00`.
+INFO:agents.booking_agent:
+
+INFO:agents.booking_agent:Booking object staypineapple ...
+INFO:agents.booking_agent:____________________________________________________________________________________________________________________________________________
+INFO:tools.get_session:____________________ Get current session
+INFO:root:__________________ Item cost:10, Current Budget: 10 -> Budget updated to: 0
+INFO:tools.get_session:____________________ Get current session
+INFO:agents.booking_agent:__________________ Booked object: staypineapple
+
+INFO:tools.exit_tool:
+
+INFO:tools.exit_tool:
+ 	 	 	 	--- --- --- --- --- --- --- --- --- --- --- --- ---  Exit Loop triggered by selectAndBookObject  --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+INFO:tools.exit_tool:_________________________ Booked Items so far: [('am415', 't10-30'), ('curb', 't18-00'), ('staypineapple', 't22-00')]
+INFO:modules.call_agent:
+
+INFO:modules.call_agent:	 	 	 **************************************************************************************************************
+INFO:modules.call_agent:	 	 	 	 	 Booked Items So Far: [('am415', 't10-30'), ('curb', 't18-00'), ('staypineapple', 't22-00')]
+INFO:modules.call_agent:	 	 	 **************************************************************************************************************
+INFO:modules.call_agent:
+
+INFO:modules.execution_monitoring:____________________________________________________________________________________________________________________________________________
+INFO:modules.execution_monitoring:Starting the Execution Monitoring ...
+INFO:tools.get_booked_items:_________________________ Getting the booked items...
+INFO:tools.get_session:____________________ Get current session
+INFO:modules.execution_monitoring:__________	 Checking booked items timing feasibility...
+INFO:tools.get_booked_items:_________________________ Getting the booked items...
+INFO:tools.get_session:____________________ Get current session
+INFO:tools.get_booked_items:_________________________ Getting the booked items...
+INFO:tools.get_session:____________________ Get current session
+INFO:tools.get_booked_items:_________________________ Getting the booked items...
+INFO:tools.get_session:____________________ Get current session
+INFO:tools.get_booked_items:_________________________ Getting the booked items...
+INFO:tools.get_session:____________________ Get current session
+INFO:modules.execution_monitoring:Dependency graph: [(('am415', 't10-30'), ('curb', 't18-00')), (('curb', 't18-00'), ('staypineapple', 't22-00'))]
+INFO:modules.execution_monitoring:__________	 Checking whether booked items match the plan...
+INFO:modules.execution_monitoring:
+ 	 X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X  PLAN CONTRADICTION found on staypineapple X X X X X X X X X X X X X X X X X X X X X X X X X X X X X X 
+
+INFO:pddl_helpers.update_pddl_model:__________	 Updating PDDL model and replanning...
+INFO:agents.predicate_searcher_agent:____________________________________________________________________________________________________________________________________________
+INFO:agents.predicate_searcher_agent:Running the predicate searcher agent ...
+INFO:modules.call_agent:Retrieved existing session.
+WARNING:google_adk.google.adk.runners:Event from an unknown agent: selectAndBookObject, event id: f48acd14-fee3-4d28-a8e1-59b2c9663766
+WARNING:google_adk.google.adk.runners:Event from an unknown agent: selectAndBookObject, event id: 3fa983f1-9d2e-4b90-b10b-80984a1f5bc6
+WARNING:google_adk.google.adk.runners:Event from an unknown agent: selectAndBookObject, event id: 1df2551e-f75e-49dd-907e-fd6be42782ab
+WARNING:google_adk.google.adk.runners:Event from an unknown agent: selectAndBookObject, event id: 4ede21a3-38ed-4fca-9247-402738986d4d
+03:13:44 - LiteLLM:INFO: utils.py:3995 - 
+LiteLLM completion() model= gemma4:31b; provider = ollama_chat
+INFO:LiteLLM:
+LiteLLM completion() model= gemma4:31b; provider = ollama_chat
+INFO:modules.call_agent:
+
+INFO:modules.call_agent:____________________________________________________________________________________________________________________________________________
+INFO:modules.call_agent:Response from [predicateTrackerAgent]: The user wants me to track predicates affected by booked items.
+I need to:
+1. Call `get_pddl_tool` to get the current PDDL model.
+2. Call `get_booked_items_tool` to get the list of currently booked items.
+3. Identify which predicates in the PDDL model are affected by these booked items.
+4. Call `update_pddl_model_tool` with the affected predicates.
+
+Let's start by calling `get_pddl` and `get_booked_items`.
+INFO:agents.predicate_searcher_agent:Getting booked items...
+INFO:tools.get_session:____________________ Get current session
+03:14:02 - LiteLLM:INFO: utils.py:3995 - 
+LiteLLM completion() model= gemma4:31b; provider = ollama_chat
+INFO:LiteLLM:
+LiteLLM completion() model= gemma4:31b; provider = ollama_chat
+INFO:modules.call_agent:
+
+INFO:modules.call_agent:____________________________________________________________________________________________________________________________________________
+INFO:modules.call_agent:Response from [predicateTrackerAgent]: The user wants me to update the PDDL model based on the booked items.
+
+1.  **Get PDDL model**: I have already called `get_pddl` and have the domain and problem.
+2.  **Get booked items**: I have already called `get_booked_items` and the result is `[('am415', 't10-30'), ('curb', 't18-00'), ('staypineapple', 't22-00')]`.
+3.  **Identify affected predicates**:
+    *   `am415` (flight) booked for `t10-30`:
+        *   `flight-booked-for am415 t10-30`
+        *   `any-flight-booked`
+    *   `curb` (taxi) booked for `t18-00`:
+        *   `taxi-booked-for curb t18-00`
+        *   `any-taxi-booked`
+    *   `staypineapple` (hotel) booked for `t22-00`:
+        *   `hotel-booked-for staypineapple t22-00`
+        *   `any-hotel-booked`
+
+4.  **Format for `update_pddl_model_tool`**:
+    `{ 'am415': ['flight-booked-for am415 t10-30', 'any-flight-booked'], 'curb': ['taxi-booked-for curb t18-00', 'any-taxi-booked'], 'staypineapple': ['hotel-booked-for staypineapple t22-00', 'any-hotel-booked'] }`
+
+Wait, the system prompt says "find which predicates in the PDDL model are affected by the booked items".
+Looking at the PDDL:
+- `book-flight` effect: `(flight-booked-for ?f ?arr) (any-flight-booked)`
+- `book-taxi` effect: `(any-taxi-booked) (taxi-booked-for ?t ?avail)`
+- `book-hotel` effect: `(hotel-booked-for ?h ?checkin) (any-hotel-booked)`
+
+So for each booked item:
+- `am415` at `t10-30` -> `flight-booked-for am415 t10-30`, `any-flight-booked`
+- `curb` at `t18-00` -> `taxi-booked-for curb t18-00`, `any-taxi-booked`
+- `staypineapple` at `t22-00` -> `hotel-booked-for staypineapple t22-00`, `any-hotel-booked`
+
+I will now call `update_pddl_model_tool`.
+INFO:agents.predicate_searcher_agent:Affected predicates: {'am415': ['flight-booked-for am415 t10-30', 'any-flight-booked'], 'curb': ['taxi-booked-for curb t18-00', 'any-taxi-booked'], 'staypineapple': ['hotel-booked-for staypineapple t22-00', 'any-hotel-booked']}
+INFO:agents.predicate_searcher_agent:PDDL model updated.
+INFO:tools.exit_tool:
+
+INFO:tools.exit_tool:
+ 	 	 	 	--- --- --- --- --- --- --- --- --- --- --- --- ---  Exit Loop triggered by predicateTrackerAgent  --- --- --- --- --- --- --- --- --- --- --- --- ---
+
+INFO:tools.exit_tool:_________________________ Booked Items so far: [('am415', 't10-30'), ('curb', 't18-00'), ('staypineapple', 't22-00')]
+INFO:modules.call_agent:
+
+INFO:modules.call_agent:	 	 	 **************************************************************************************************************
+INFO:modules.call_agent:	 	 	 	 	 Booked Items So Far: [('am415', 't10-30'), ('curb', 't18-00'), ('staypineapple', 't22-00')]
+INFO:modules.call_agent:	 	 	 **************************************************************************************************************
+INFO:modules.call_agent:
+
+INFO:pddl_helpers.update_pddl_model:__________	 Replanning, based on the current state and booked items so far ... 
+
+INFO:pddl_helpers.pddl_planner: Running PDDL Planner...
+INFO:pddl_helpers.pddl_planner: Plan found!
+INFO:pddl_helpers.update_pddl_model:__________	 New plan achieved: 
+INFO:pddl_helpers.update_pddl_model:__________	 Continue the planning...
+INFO:tools.get_session:____________________ Get current session
+INFO:tools.get_session:____________________ Get current session
+INFO:modules.orchestrator:
+
+INFO:modules.orchestrator: ~**~ ~**~ ~**~ ~**~ ~**~ ~**~ ~**~ ~**~ ~**~ ~**~ ~**~ ~**~ ~**~ ~**~ ~**~ ~**~ ~**~ ~**~ ~**~ ~**~ ~**~ ~**~ ~**~ ~**~ ~**~ ~**~ ~**~ ~**~ ~**~ ~**~
+INFO:modules.orchestrator: ~**~ ~**~ ~**~ ~**~ ~**~ ~**~ ~**~ ~**~ ~**~ ~**~ ~**~ ~**~ ~**~ ~**~ ~**~ ~**~ ~**~ ~**~ ~**~ ~**~ ~**~ ~**~ ~**~ ~**~ ~**~ ~**~ ~**~ ~**~ ~**~ ~**~
+INFO:modules.orchestrator:
+
+INFO:modules.orchestrator:	 	 Orchestration complete. Travel plan successfully booked.
+
+INFO:modules.orchestrator:	 	 Booked Items: [('am415', 't10-30'), ('curb', 't18-00'), ('staypineapple', 't22-00')]
+INFO:modules.orchestrator:
+
+INFO:modules.orchestrator: ~**~ ~**~ ~**~ ~**~ ~**~ ~**~ ~**~ ~**~ ~**~ ~**~ ~**~ ~**~ ~**~ ~**~ ~**~ ~**~ ~**~ ~**~ ~**~ ~**~ ~**~ ~**~ ~**~ ~**~ ~**~ ~**~ ~**~ ~**~ ~**~ ~**~
+INFO:modules.orchestrator: ~**~ ~**~ ~**~ ~**~ ~**~ ~**~ ~**~ ~**~ ~**~ ~**~ ~**~ ~**~ ~**~ ~**~ ~**~ ~**~ ~**~ ~**~ ~**~ ~**~ ~**~ ~**~ ~**~ ~**~ ~**~ ~**~ ~**~ ~**~ ~**~ ~**~
+INFO:modules.orchestrator:
+
+INFO:modules.orchestrator:Orchestration plan file removed successfully.
+#
